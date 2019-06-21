@@ -1,12 +1,12 @@
 spring.jpa:
   database: POSTGRESQL
-  hibernate.ddl-auto: create-drop
+  hibernate.ddl-auto: update
   show-sql: true
 
 spring.datasource:
   platform: postgres
   driverClassName: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/web
+  url: jdbc:postgresql://localhost:5432/bot
   username: postgres
   password: postgres
 

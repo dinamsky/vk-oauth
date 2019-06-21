@@ -19,7 +19,7 @@ public class AppUser {
     private String username;
     private String password;
     private boolean enabled = true;
-    private Date lastLogin;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_privileges", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
     private Set<Privilege> privileges;
@@ -104,11 +104,5 @@ public class AppUser {
         this.enabled = enabled;
     }
 
-    public Date getLastLogin() {
-        return lastLogin;
-    }
 
-    public void setLastLogin(Date lastLogin) {
-        this.lastLogin = lastLogin;
-    }
 }

@@ -47,16 +47,17 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private WebApplicationContext applicationContext;
-    private MyUserDetailService userDetailsService;
     @Autowired
-    private AuthSuccessHandlerImpl successHandler;
+    private MyUserDetailService userDetailsService;
+//    @Autowired
+//    private AuthSuccessHandlerImpl successHandler;
     @Autowired
     private DataSource dataSource;
-
-    @PostConstruct
-    public void completeSetup() {
-        userDetailsService = applicationContext.getBean(MyUserDetailService.class);
-    }
+// TODO это что тоже после
+//    @PostConstruct
+//    public void completeSetup() {
+//        userDetailsService = applicationContext.getBean(MyUserDetailService.class);
+//    }
 
     @Autowired
     OAuth2ClientContext oAuth2ClientContext;

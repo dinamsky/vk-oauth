@@ -18,12 +18,13 @@ public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
     private WebApplicationContext applicationContext;
+    @Autowired
     UserRepo userRepo;
-
-    @PostConstruct
-    public void completeSetup() {
-        userRepo = applicationContext.getBean(UserRepo.class);
-    }
+//TODO вот это нахер надо то?
+//    @PostConstruct
+//    public void completeSetup() {
+//        userRepo = applicationContext.getBean(UserRepo.class);
+//    }
 
 
     @Override

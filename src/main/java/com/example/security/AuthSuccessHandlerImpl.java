@@ -17,6 +17,6 @@ public class AuthSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        userRepo.updateLastLogin(new Date());
+//        userRepo.updateLastLogin(new Date());
     }
 }

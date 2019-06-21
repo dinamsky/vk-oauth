@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,12 +21,15 @@ public class WebController {
         return new AuthorizationCodeResourceDetails();
     }
 
+
+    @PreAuthorize("hasRole('ROLE_USER')")
     @RequestMapping({ "/user", "/me" })
     public Map<String, String> user(Principal principal) {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("name", principal.getName());
         return map;
     }
+//    @PreAuthorize("hasRole('ROLE_USER')")
 //TODO how to get friends fromhere
 //    @RequestMapping("/friends")
 //    public String friends() {

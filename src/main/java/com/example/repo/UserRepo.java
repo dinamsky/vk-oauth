@@ -12,5 +12,5 @@ public interface UserRepo extends JpaRepository<AppUser,Long> {
     @Transactional
     void readUserByUsername(String username);
 
-    void updateLastLogin(Date date);
+
 }
