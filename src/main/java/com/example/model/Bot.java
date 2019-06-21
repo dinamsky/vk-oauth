@@ -1,19 +1,22 @@
-package com.example.entity;
+package com.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
+@Table
 public class Bot {
     @Id
-    private String uuid;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String token;
+    @Column(nullable = false,unique = true)
     private String username;
 
+    private String owner;
+
     public Bot(String token, String username) {
-        this.uuid = UUID.randomUUID().toString();
+
         this.token = token;
         this.username = username;
     }
@@ -26,13 +29,7 @@ public class Bot {
         return username;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 
     public void setToken(String token) {
         this.token = token;
@@ -47,13 +44,21 @@ public class Bot {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bot bot = (Bot) o;
-        return Objects.equals(uuid, bot.uuid) &&
+        return Objects.equals(id, bot.id) &&
                 Objects.equals(token, bot.token) &&
                 Objects.equals(username, bot.username);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, token, username);
+        return Objects.hash(id, token, username);
     }
 }

@@ -33,9 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.filter.CompositeFilter;
 
 @SpringBootApplication
-@RestController
-
-
 public class SocialApplication {
 
 	public static void main(String[] args) {

@@ -1,14 +1,27 @@
-package com.example.security;
+package com.example.config;
 
+import com.example.security.AuthSuccessHandlerImpl;
+import com.example.security.MyUserDetailService;
+import com.example.security.UserInfoTokenServicesForVk;
+import com.example.security.VkCustomFilter;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter;
@@ -18,13 +31,33 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CompositeFilter;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+@EnableWebSecurity
 @EnableOAuth2Client
+@Configuration
+@ComponentScan("com.example.security")
 public class SecConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private WebApplicationContext applicationContext;
+    private MyUserDetailService userDetailsService;
+    @Autowired
+    private AuthSuccessHandlerImpl successHandler;
+    @Autowired
+    private DataSource dataSource;
+
+    @PostConstruct
+    public void completeSetup() {
+        userDetailsService = applicationContext.getBean(MyUserDetailService.class);
+    }
+
     @Autowired
     OAuth2ClientContext oAuth2ClientContext;
     @Override
@@ -45,6 +78,43 @@ public class SecConfig extends WebSecurityConfigurerAdapter {
         registration.setOrder(-100);
         return registration;
     }
+
+    //TODO Configure UserDetails JDBC auth
+    @Override
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(encoder())
+                .and()
+                .authenticationProvider(authenticationProvider())
+                .jdbcAuthentication()
+                .dataSource(dataSource);
+    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/resources/**");
+    }
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(11);
+    }
+
+//    @Bean
+//    public SecurityEvaluationContextExtension securityEvaluationContextExtension() {
+//        return new SecurityEvaluationContextExtension();
+//    }
+    //TODO UsrDetailsDAO
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    }
+
+
+
+
     @Bean
     @ConfigurationProperties("vkontakte.client")
     public AuthorizationCodeResourceDetails vk() {
